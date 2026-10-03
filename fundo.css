@@ -1,0 +1,14 @@
+/* Fundo oficial do DARK STAFF */
+html, body {
+    min-height: 100%;
+}
+
+body {
+    background-image:
+        linear-gradient(rgba(5, 3, 14, 0.30), rgba(5, 3, 14, 0.30)),
+        url("dark_staff_bg.png");
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}

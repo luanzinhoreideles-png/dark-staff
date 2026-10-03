@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>DARK STAFF — Avaliação</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        :root {
+            --purple: #9b6cff;
+            --purple-light: #c6a8ff;
+            --panel: rgba(10, 8, 17, 0.82);
+            --border: rgba(164, 112, 255, 0.28);
+            --text: #f7f4ff;
+            --muted: #aaa2b9;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            color: var(--text);
+            font-family: Inter, system-ui, -apple-system,
+                         BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+            background:
+                linear-gradient(
+                    rgba(5, 4, 9, 0.38),
+                    rgba(5, 4, 9, 0.72)
+                ),
+                url("{{ url_for('static', filename='dark_staff_bg.png') }}")
+                center / cover fixed,
+                #07060b;
+        }
+
+        .page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 28px 16px;
+        }
+
+        .shell {
+            width: min(980px, 100%);
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 18px;
+        }
+
+        .card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 34px;
+
+            box-shadow:
+                0 20px 70px rgba(0, 0, 0, 0.5),
+                0 0 50px rgba(130, 80, 255, 0.08);
+
+            backdrop-filter: blur(14px);
+        }
+
+        .brand {
+            color: var(--purple-light);
+            font-size: 12px;
+            font-weight: 900;
+            letter-spacing: 2px;
+        }
+
+        .dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--purple);
+            box-shadow: 0 0 12px var(--purple);
+            margin-right: 8px;
+        }
+
+        h1 {
+            font-size: clamp(42px, 8vw, 76px);
+            line-height: 0.95;
+            margin: 18px 0 14px;
+            letter-spacing: -3px;
+        }
+
+        h1 span {
+            color: var(--purple);
+        }
+
+        .lead {
+            font-size: 18px;
+            line-height: 1.65;
+            color: #d0cad9;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            min-height: 54px;
+            padding: 0 22px;
+            margin-top: 26px;
+
+            border-radius: 14px;
+            text-decoration: none;
+
+            font-weight: 900;
+
+            background: linear-gradient(
+                135deg,
+                #8e5cff,
+                #b58cff
+            );
+
+            color: white;
+
+            box-shadow:
+                0 12px 30px rgba(128, 76, 255, 0.28);
+
+            transition: 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow:
+                0 16px 38px rgba(128, 76, 255, 0.4);
+        }
+
+        .user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            padding: 14px;
+            margin-top: 22px;
+
+            border-radius: 14px;
+
+            background: rgba(255, 255, 255, 0.045);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+        }
+
+        .user strong {
+            display: block;
+        }
+
+        .user small {
+            color: var(--muted);
+        }
+
+        .avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #25183d;
+        }
+
+        .features {
+            display: grid;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .feature {
+            padding: 17px;
+
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            background: rgba(255, 255, 255, 0.035);
+
+            border-radius: 16px;
+        }
+
+        .feature b {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .feature span {
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 760px) {
+
+            .shell {
+                grid-template-columns: 1fr;
+            }
+
+            .card {
+                padding: 26px 20px;
+            }
+
+            .page {
+                align-items: flex-start;
+                padding-top: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page">
+
+    <main class="shell">
+
+        <!-- ÁREA PRINCIPAL -->
+
+        <section class="card">
+
+            <div class="brand">
+                <span class="dot"></span>
+                DARK STAFF
+            </div>
+
+            <h1>
+                Faça parte da<br>
+                <span>equipe.</span>
+            </h1>
+
+            <p class="lead">
+                Sistema oficial de avaliação da equipe DARK.
+                Entre com sua conta Discord, responda às perguntas
+                e envie sua candidatura para análise da administração.
+            </p>
+
+            {% if user %}
+
+                <div class="user">
+
+                    {% if user.get('avatar') %}
+
+                        <img
+                            class="avatar"
+                            src="https://cdn.discordapp.com/avatars/{{ user['id'] }}/{{ user['avatar'] }}.png?size=128"
+                            alt=""
+                        >
+
+                    {% else %}
+
+                        <div class="avatar"></div>
+
+                    {% endif %}
+
+                    <div>
+
+                        <strong>
+                            {{ user.get('global_name') or user.get('username') }}
+                        </strong>
+
+                        <small>
+                            @{{ user.get('username') }}
+                        </small>
+
+                    </div>
+
+                </div>
+
+                <a
+                    class="btn"
+                    href="{{ url_for('teste') }}"
+                >
+                    📋 CONTINUAR PARA A AVALIAÇÃO
+                </a>
+
+            {% else %}
+
+                <a
+                    class="btn"
+                    href="{{ login_url }}"
+                >
+                    🔐 ENTRAR COM DISCORD
+                </a>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- INFORMAÇÕES -->
+
+        <aside class="card">
+
+            <div class="brand">
+                PROCESSO DE AVALIAÇÃO
+            </div>
+
+            <div class="features">
+
+                <div class="feature">
+                    <b>🛡️ Processo seguro</b>
+
+                    <span>
+                        Autenticação através do Discord
+                        para identificar o candidato.
+                    </span>
+                </div>
+
+                <div class="feature">
+                    <b>📋 Avaliação organizada</b>
+
+                    <span>
+                        Responda às perguntas da candidatura
+                        de forma simples e objetiva.
+                    </span>
+                </div>
+
+                <div class="feature">
+                    <b>⚡ Análise da administração</b>
+
+                    <span>
+                        Depois do envio, sua avaliação fica
+                        disponível para a equipe responsável.
+                    </span>
+                </div>
+
+                <div class="feature">
+                    <b>🌑 DARK STAFF</b>
+
+                    <span>
+                        Uma experiência centralizada para
+                        o processo de seleção da equipe.
+                    </span>
+                </div>
+
+            </div>
+
+        </aside>
+
+    </main>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Resultado — DARK STAFF</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+</head>
+
+<body>
+
+    <main class="container">
+
+        <section class="card result-card">
+
+            <span class="badge">DARK STAFF</span>
+
+            <h1>Resultado da avaliação</h1>
+
+            <p class="description">
+                Sua avaliação foi enviada com sucesso.
+            </p>
+
+            <div class="score-box">
+
+                <span class="score-label">
+                    Pontuação
+                </span>
+
+                <strong class="score">
+                    {{ result.score }}/{{ result.max_score }}
+                </strong>
+
+                <span class="status">
+                    {{ status }}
+                </span>
+
+            </div>
+
+            <div class="info-box">
+
+                <p>
+                    <strong>11 perguntas</strong>
+                </p>
+
+                <p>
+                    Sua avaliação foi enviada para análise.
+                </p>
+
+                <p>
+                    O resultado é apenas um indicador.
+                    A decisão final sobre a entrada na equipe
+                    deve ser feita pela administração.
+                </p>
+
+            </div>
+
+            <a
+                class="button"
+                href="{{ url_for('index') }}"
+            >
+                VOLTAR AO INÍCIO
+            </a>
+
+            <a
+                class="logout"
+                href="{{ url_for('logout') }}"
+            >
+                Sair da conta
+            </a>
+
+        </section>
+
+    </main>
+
+</body>
+</html>

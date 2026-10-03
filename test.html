@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Avaliação — DARK STAFF</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+</head>
+
+<body>
+
+    <main class="container">
+
+        <section class="card">
+
+            <div class="top">
+                <span class="badge">DARK STAFF</span>
+
+                <h1>Avaliação para Staff</h1>
+
+                <p class="description">
+                    Responda às 11 perguntas abaixo com sinceridade.
+                    Cada pergunta vale até 2 pontos.
+                </p>
+            </div>
+
+            <form method="POST">
+
+                {% for question in questions %}
+
+                    <div class="question">
+
+                        <h2>
+                            {{ loop.index }}. {{ question.question }}
+                        </h2>
+
+                        <div class="options">
+
+                            {% for value, label in question.options %}
+
+                                <label class="option">
+
+                                    <input
+                                        type="radio"
+                                        name="{{ question.key }}"
+                                        value="{{ value }}"
+                                        {% if loop.first %}checked{% endif %}
+                                    >
+
+                                    <span>
+                                        {{ label }}
+                                    </span>
+
+                                </label>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+                <button
+                    type="submit"
+                    class="button"
+                >
+                    ENVIAR AVALIAÇÃO
+                </button>
+
+            </form>
+
+            <p class="small-text">
+                A pontuação máxima final é de 20 pontos.
+            </p>
+
+        </section>
+
+    </main>
+
+</body>
+</html>

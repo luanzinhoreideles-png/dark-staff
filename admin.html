@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Painel Administrativo — DARK STAFF</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            color: #f5f2ff;
+            font-family: Inter, system-ui, -apple-system,
+                         BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+            background:
+                linear-gradient(
+                    rgba(5, 4, 9, .55),
+                    rgba(5, 4, 9, .82)
+                ),
+                url("{{ url_for('static', filename='dark_staff_bg.png') }}")
+                center / cover fixed,
+                #07060b;
+        }
+
+        .page {
+            width: min(1180px, 100%);
+            margin: auto;
+            padding: 28px 18px 50px;
+        }
+
+        /* TOPO */
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #9b6cff;
+            box-shadow: 0 0 16px #9b6cff;
+        }
+
+        .brand strong {
+            font-size: 18px;
+            letter-spacing: 1px;
+        }
+
+        .brand span {
+            display: block;
+            margin-top: 3px;
+            color: #8f889d;
+            font-size: 12px;
+        }
+
+        .back {
+            color: #aaa1b9;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .back:hover {
+            color: #c6a8ff;
+        }
+
+        /* CABEÇALHO */
+
+        .hero {
+            margin-bottom: 25px;
+        }
+
+        .hero h1 {
+            margin: 0;
+            font-size: clamp(32px, 6vw, 52px);
+            letter-spacing: -2px;
+        }
+
+        .hero h1 span {
+            color: #9b6cff;
+        }
+
+        .hero p {
+            margin: 10px 0 0;
+            color: #aaa3b4;
+            line-height: 1.6;
+        }
+
+        /* CARDS DE ESTATÍSTICAS */
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-bottom: 22px;
+        }
+
+        .stat {
+            padding: 21px;
+            border-radius: 18px;
+
+            background: rgba(12, 10, 20, .82);
+            border: 1px solid rgba(164, 112, 255, .18);
+
+            box-shadow: 0 12px 35px rgba(0,0,0,.25);
+            backdrop-filter: blur(12px);
+        }
+
+        .stat-label {
+            color: #928b9e;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .stat-number {
+            margin-top: 8px;
+            font-size: 32px;
+            font-weight: 900;
+        }
+
+        .purple {
+            color: #b695ff;
+        }
+
+        .yellow {
+            color: #ffd45c;
+        }
+
+        .green {
+            color: #55e0a2;
+        }
+
+        .red {
+            color: #ff7180;
+        }
+
+        /* FILTROS */
+
+        .filters {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 22px;
+            flex-wrap: wrap;
+        }
+
+        .search {
+            flex: 1;
+            min-width: 220px;
+        }
+
+        .search input,
+        .filters select {
+            width: 100%;
+            height: 48px;
+
+            padding: 0 15px;
+
+            border-radius: 12px;
+            border: 1px solid #292534;
+
+            background: rgba(10, 8, 16, .9);
+            color: #eee9f8;
+
+            outline: none;
+        }
+
+        .search input:focus,
+        .filters select:focus {
+            border-color: #9b6cff;
+            box-shadow: 0 0 0 3px rgba(155,108,255,.1);
+        }
+
+        .filters select {
+            width: 180px;
+        }
+
+        /* LISTA */
+
+        .list {
+            display: grid;
+            gap: 13px;
+        }
+
+        .evaluation {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+
+            padding: 19px;
+
+            background: rgba(10, 8, 16, .84);
+            border: 1px solid rgba(164, 112, 255, .16);
+
+            border-radius: 18px;
+
+            transition: .2s;
+        }
+
+        .evaluation:hover {
+            transform: translateY(-2px);
+            border-color: rgba(155,108,255,.4);
+            box-shadow: 0 12px 35px rgba(0,0,0,.3);
+        }
+
+        .candidate {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            min-width: 0;
+        }
+
+        .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            flex-shrink: 0;
+
+            background: linear-gradient(
+                135deg,
+                #38245f,
+                #171220
+            );
+
+            color: #c8adff;
+            font-weight: 900;
+        }
+
+        .candidate-info {
+            min-width: 0;
+        }
+
+        .candidate-name {
+            font-weight: 900;
+            font-size: 16px;
+
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .candidate-id {
+            margin-top: 4px;
+            color: #80798a;
+            font-size: 12px;
+        }
+
+        .candidate-date {
+            margin-top: 3px;
+            color: #625c69;
+            font-size: 11px;
+        }
+
+        /* CENTRO */
+
+        .middle {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .score {
+            min-width: 72px;
+            text-align: center;
+        }
+
+        .score strong {
+            display: block;
+            color: #b695ff;
+            font-size: 25px;
+            font-weight: 900;
+        }
+
+        .score small {
+            color: #716a79;
+            font-size: 11px;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 7px 11px;
+            border-radius: 999px;
+
+            font-size: 11px;
+            font-weight: 900;
+        }
+
+        .status.pending {
+            color: #ffd45c;
+            background: rgba(255, 212, 92, .10);
+            border: 1px solid rgba(255, 212, 92, .18);
+        }
+
+        .status.approved {
+            color: #55e0a2;
+            background: rgba(85, 224, 162, .10);
+            border: 1px solid rgba(85, 224, 162, .18);
+        }
+
+        .status.rejected {
+            color: #ff7180;
+            background: rgba(255, 113, 128, .10);
+            border: 1px solid rgba(255, 113, 128, .18);
+        }
+
+        /* BOTÃO */
+
+        .open {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            min-width: 105px;
+            height: 42px;
+            padding: 0 15px;
+
+            border-radius: 11px;
+
+            color: white;
+            background: linear-gradient(
+                135deg,
+                #8252ed,
+                #a777ff
+            );
+
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 900;
+
+            transition: .2s;
+        }
+
+        .open:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(130,82,237,.3);
+        }
+
+        /* VAZIO */
+
+        .empty {
+            padding: 55px 20px;
+            text-align: center;
+
+            border-radius: 18px;
+            border: 1px dashed #302a3b;
+
+            background: rgba(10, 8, 16, .7);
+        }
+
+        .empty-icon {
+            font-size: 38px;
+            margin-bottom: 10px;
+        }
+
+        .empty strong {
+            display: block;
+            font-size: 17px;
+        }
+
+        .empty span {
+            display: block;
+            margin-top: 6px;
+            color: #817a89;
+            font-size: 13px;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 850px) {
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .evaluation {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .middle {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .open {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 520px) {
+
+            .page {
+                padding: 20px 12px 35px;
+            }
+
+            .topbar {
+                align-items: flex-start;
+            }
+
+            .stats {
+                grid-template-columns: 1fr 1fr;
+                gap: 9px;
+            }
+
+            .stat {
+                padding: 16px;
+            }
+
+            .stat-number {
+                font-size: 26px;
+            }
+
+            .filters {
+                display: grid;
+                grid-template-columns: 1fr;
+            }
+
+            .filters select {
+                width: 100%;
+            }
+
+            .middle {
+                flex-wrap: wrap;
+            }
+
+            .score {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page">
+
+    <!-- TOPO -->
+
+    <header class="topbar">
+
+        <div class="brand">
+            <div class="brand-dot"></div>
+
+            <div>
+                <strong>DARK STAFF</strong>
+                <span>Painel administrativo</span>
+            </div>
+        </div>
+
+        <a class="back" href="{{ url_for('index') }}">
+            ← Voltar
+        </a>
+
+    </header>
+
+
+    <!-- CABEÇALHO -->
+
+    <section class="hero">
+
+        <h1>
+            Painel <span>Administrativo</span>
+        </h1>
+
+        <p>
+            Gerencie e acompanhe todas as avaliações da equipe.
+        </p>
+
+    </section>
+
+
+    <!-- ESTATÍSTICAS -->
+
+    {% set total = evaluations|length %}
+    {% set pendentes = evaluations|selectattr('status', 'equalto', 'Pendente')|list|length %}
+    {% set aprovados = evaluations|selectattr('status', 'equalto', 'Aprovado')|list|length %}
+    {% set recusados = evaluations|selectattr('status', 'equalto', 'Recusado')|list|length %}
+
+    <section class="stats">
+
+        <div class="stat">
+            <div class="stat-label">TOTAL</div>
+            <div class="stat-number purple">{{ total }}</div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-label">PENDENTES</div>
+            <div class="stat-number yellow">{{ pendentes }}</div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-label">APROVADOS</div>
+            <div class="stat-number green">{{ aprovados }}</div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-label">RECUSADOS</div>
+            <div class="stat-number red">{{ recusados }}</div>
+        </div>
+
+    </section>
+
+
+    <!-- FILTROS -->
+
+    <section class="filters">
+
+        <div class="search">
+
+            <input
+                id="search"
+                type="text"
+                placeholder="🔎 Pesquisar candidato, usuário ou ID..."
+                oninput="filterEvaluations()"
+            >
+
+        </div>
+
+        <select
+            id="statusFilter"
+            onchange="filterEvaluations()"
+        >
+            <option value="todos">Todos os status</option>
+            <option value="Pendente">Pendentes</option>
+            <option value="Aprovado">Aprovados</option>
+            <option value="Recusado">Recusados</option>
+        </select>
+
+    </section>
+
+
+    <!-- AVALIAÇÕES -->
+
+    <section class="list" id="evaluationList">
+
+        {% if evaluations %}
+
+            {% for evaluation in evaluations %}
+
+                <article
+                    class="evaluation"
+                    data-name="{{ evaluation['username']|lower }}"
+                    data-global="{{ (evaluation['global_name'] or '')|lower }}"
+                    data-id="{{ evaluation['discord_id'] }}"
+                    data-status="{{ evaluation['status'] }}"
+                >
+
+                    <div class="candidate">
+
+                        <div class="avatar">
+                            {{ (evaluation['global_name'] or evaluation['username'])[0]|upper }}
+                        </div>
+
+                        <div class="candidate-info">
+
+                            <div class="candidate-name">
+                                {{ evaluation['global_name'] or evaluation['username'] }}
+                            </div>
+
+                            <div class="candidate-id">
+                                @{{ evaluation['username'] }}
+                                · ID {{ evaluation['discord_id'] }}
+                            </div>
+
+                            <div class="candidate-date">
+                                {{ evaluation['created_at'] }}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="middle">
+
+                        <div class="score">
+
+                            <strong>
+                                {{ evaluation['score'] }}
+                            </strong>
+
+                            <small>
+                                / 20
+                            </small>
+
+                        </div>
+
+
+                        {% if evaluation['status'] == 'Aprovado' %}
+
+                            <div class="status approved">
+                                ● APROVADO
+                            </div>
+
+                        {% elif evaluation['status'] == 'Recusado' %}
+
+                            <div class="status rejected">
+                                ● RECUSADO
+                            </div>
+
+                        {% else %}
+
+                            <div class="status pending">
+                                ● PENDENTE
+                            </div>
+
+                        {% endif %}
+
+
+                        <a
+                            class="open"
+                            href="{{ url_for(
+                                'admin_evaluation',
+                                evaluation_id=evaluation['id']
+                            ) }}"
+                        >
+                            VER AVALIAÇÃO
+                        </a>
+
+                    </div>
+
+                </article>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="empty">
+
+                <div class="empty-icon">
+                    📋
+                </div>
+
+                <strong>
+                    Nenhuma avaliação encontrada
+                </strong>
+
+                <span>
+                    Quando alguém enviar uma candidatura,
+                    ela aparecerá aqui.
+                </span>
+
+            </div>
+
+        {% endif %}
+
+    </section>
+
+</div>
+
+
+<script>
+    function filterEvaluations() {
+
+        const search =
+            document
+                .getElementById("search")
+                .value
+                .toLowerCase()
+                .trim();
+
+        const status =
+            document
+                .getElementById("statusFilter")
+                .value;
+
+        const cards =
+            document.querySelectorAll(".evaluation");
+
+        cards.forEach(card => {
+
+            const name =
+                card.dataset.name || "";
+
+            const globalName =
+                card.dataset.global || "";
+
+            const id =
+                card.dataset.id || "";
+
+            const cardStatus =
+                card.dataset.status || "";
+
+            const matchesSearch =
+                !search ||
+                name.includes(search) ||
+                globalName.includes(search) ||
+                id.includes(search);
+
+            const matchesStatus =
+                status === "todos" ||
+                cardStatus === status;
+
+            card.style.display =
+                matchesSearch && matchesStatus
+                    ? ""
+                    : "none";
+        });
+    }
+</script>
+
+</body>
+</html>

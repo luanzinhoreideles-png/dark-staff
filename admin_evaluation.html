@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avaliação — DARK STAFF</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:20px}
+        .back{color:#aaa;text-decoration:none}
+        .candidate{display:flex;justify-content:space-between;gap:20px;align-items:center;flex-wrap:wrap}
+        .candidate h1{margin:8px 0;font-size:28px}
+        .badge{display:inline-block;padding:6px 10px;border-radius:999px;background:#252530;color:#b9a5ff;font-size:12px;font-weight:700}
+        .scorebox{font-size:38px;font-weight:900;color:#9b7cff;text-align:center;min-width:110px}
+        .scorebox small{font-size:15px;color:#777;font-weight:600}
+        .status{display:inline-block;padding:7px 12px;border-radius:999px;font-weight:700}
+        .status.pending{background:#493d18;color:#ffd75a}.status.approved{background:#123c2c;color:#58e0a4}.status.rejected{background:#4a2028;color:#ff7180}
+        .question{margin:14px 0;padding:18px;background:#0e0e13;border:1px solid #292934;border-radius:14px}
+        .question-title{font-weight:700;margin-bottom:10px;line-height:1.45}
+        .answer{color:#c9c9d1;line-height:1.5}
+        .actions{display:flex;gap:12px;margin-top:20px}
+        .actions form{flex:1;margin:0}
+        .actions button{width:100%;border:0;border-radius:11px;padding:14px;font-weight:800;color:white;cursor:pointer}
+        .approve{background:#20c997}.reject{background:#dc3545}.delete{background:#6f42c1}
+        .history{margin-top:24px}.history-item{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:10px 0;padding:14px 16px;background:#0e0e13;border:1px solid #292934;border-radius:12px}.history-meta{color:#888;font-size:13px}.empty-history{color:#888;padding:12px 0}.notice{padding:15px;border-radius:12px;margin-top:20px;background:#1a1a22;color:#ddd;line-height:1.5}
+        @media(max-width:600px){.actions{flex-direction:column}.scorebox{width:100%}}
+    </style>
+</head>
+<body>
+<main class="container">
+    <div class="card">
+        <div class="topbar">
+            <span class="badge">DARK STAFF</span>
+            <a class="back" href="{{ url_for('admin_panel') }}">← Voltar ao painel</a>
+        </div>
+
+        <section>
+            <div class="candidate">
+                <div>
+                    <span class="badge">CANDIDATO</span>
+                    <h1>{{ evaluation['global_name'] or evaluation['username'] }}</h1>
+                    <p>@{{ evaluation['username'] }}</p>
+                    <p class="muted">ID Discord: {{ evaluation['discord_id'] }}</p>
+                    <p class="muted">Enviado em: {{ evaluation['created_at'] }}</p>
+                </div>
+                <div class="scorebox">
+                    {{ evaluation['score'] }}<small>/20</small>
+                </div>
+            </div>
+
+            {% if evaluation['status'] == 'Pendente' %}
+                <span class="status pending">🟡 Pendente</span>
+            {% elif evaluation['status'] == 'Aprovado' %}
+                <span class="status approved">✅ Aprovado</span>
+            {% elif evaluation['status'] == 'Recusado' %}
+                <span class="status rejected">❌ Recusado</span>
+            {% else %}
+                <span class="status">{{ evaluation['status'] }}</span>
+            {% endif %}
+        </section>
+
+        <section>
+            <h2>Respostas da avaliação</h2>
+            {% for item in questions %}
+                <div class="question">
+                    <div class="question-title">{{ loop.index }}. {{ item['question'] }}</div>
+                    <div class="answer">
+                        {% set selected = answers.get(item['key']) %}
+                        {% if selected is not none and selected|string in ['0', '1', '2'] %}
+                            {% for option in item['options'] %}
+                                {% if option[0]|string == selected|string %}
+                                    {{ option[1] }}
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            Não respondida.
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </section>
+
+        <section class="history">
+            <h2>Histórico de ações</h2>
+            {% if actions %}
+                {% for action in actions %}
+                    <div class="history-item">
+                        <strong>{% if action['action'] == 'Aprovado' %}✅{% elif action['action'] == 'Recusado' %}❌{% else %}🗑️{% endif %} {{ action['action'] }}</strong>
+                        <span class="history-meta">{{ action['admin_username'] or action['admin_discord_id'] }} • {{ action['created_at'] }}</span>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-history">Nenhuma ação administrativa registrada ainda.</div>
+            {% endif %}
+        </section>
+
+        {% if evaluation['observation'] %}
+            <div class="notice">
+                <strong>Observação:</strong><br>
+                {{ evaluation['observation'] }}
+            </div>
+        {% endif %}
+
+        {% if evaluation['status'] == 'Pendente' %}
+            <div class="actions">
+                <form method="POST" action="{{ url_for('approve_evaluation', evaluation_id=evaluation['id']) }}"
+                      onsubmit="return confirm('Tem certeza que deseja aprovar este candidato e adicionar o cargo Staff?');">
+                    <button type="submit" class="approve">✅ APROVAR</button>
+                </form>
+
+                <form method="POST" action="{{ url_for('reject_evaluation', evaluation_id=evaluation['id']) }}"
+                      onsubmit="return confirm('Tem certeza que deseja recusar este candidato?');">
+                    <button type="submit" class="reject">❌ RECUSAR</button>
+                </form>
+
+                <form method="POST" action="{{ url_for('delete_evaluation', evaluation_id=evaluation['id']) }}"
+                      onsubmit="return confirm('ATENÇÃO: esta ação excluirá permanentemente esta avaliação. Deseja continuar?');">
+                    <button type="submit" class="delete">🗑️ EXCLUIR</button>
+                </form>
+            </div>
+        {% elif evaluation['status'] == 'Aprovado' %}
+            <div class="notice">
+                <strong>✅ Candidato aprovado.</strong><br>
+                O cargo de Staff foi aplicado ao usuário.
+            </div>
+            <form method="POST" action="{{ url_for('delete_evaluation', evaluation_id=evaluation['id']) }}"
+                  onsubmit="return confirm('ATENÇÃO: esta ação excluirá permanentemente esta avaliação. Deseja continuar?');">
+                <button type="submit" class="delete" style="width:100%;border:0;border-radius:11px;padding:14px;margin-top:20px;font-weight:800;color:white;cursor:pointer;">🗑️ EXCLUIR AVALIAÇÃO</button>
+            </form>
+        {% elif evaluation['status'] == 'Recusado' %}
+            <div class="notice">
+                <strong>❌ Candidato recusado.</strong><br>
+                Esta avaliação foi recusada pela administração.
+            </div>
+            <form method="POST" action="{{ url_for('delete_evaluation', evaluation_id=evaluation['id']) }}"
+                  onsubmit="return confirm('ATENÇÃO: esta ação excluirá permanentemente esta avaliação. Deseja continuar?');">
+                <button type="submit" class="delete" style="width:100%;border:0;border-radius:11px;padding:14px;margin-top:20px;font-weight:800;color:white;cursor:pointer;">🗑️ EXCLUIR AVALIAÇÃO</button>
+            </form>
+        {% endif %}
+
+        <a class="btn" style="display:block;text-align:center;margin-top:20px" href="{{ url_for('admin_panel') }}">VOLTAR AO PAINEL</a>
+    </div>
+</main>
+</body>
+</html>

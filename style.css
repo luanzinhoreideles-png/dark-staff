@@ -1,0 +1,24 @@
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:#09090d;color:#f5f5f7;font-family:Arial,sans-serif;padding:18px}.card{max-width:850px;margin:5vh auto;background:#14141b;border:1px solid #292934;border-radius:20px;padding:28px;box-shadow:0 20px 60px #0008}.hero{text-align:center;padding:48px 25px}.hero>b,header{color:#9b7cff;letter-spacing:2px}.hero h1{font-size:clamp(30px,7vw,55px)}p{color:#aaa;line-height:1.6}.btn{display:inline-block;background:#704cff;color:white;text-decoration:none;border:0;border-radius:11px;padding:13px 18px;font-weight:700;cursor:pointer}.hero a:not(.btn){margin:15px;color:#aaa}.hero small{display:block;color:#777;margin-top:25px}header{display:flex;justify-content:space-between}section{margin:24px 0;padding:18px;border:1px solid #292934;border-radius:15px}h2{font-size:18px;line-height:1.4}.option{display:flex;gap:10px;align-items:center;background:#0e0e13;border:1px solid #262630;padding:12px;border-radius:10px;margin:8px 0;cursor:pointer}.option span{flex:1}.option b{color:#9b7cff}.option input{accent-color:#704cff}.error{background:#4d2028;padding:12px;border-radius:10px}button{width:100%;font:inherit}.score{font-size:90px;font-weight:900;color:#9b7cff}.score small{font-size:28px;color:#777}.muted{color:#888}@media(max-width:600px){body{padding:10px}.card{padding:18px}.hero{padding:35px 18px}section{padding:14px}}
+
+/* ===== DARK STAFF — FUNDO NEON ===== */
+body{
+    background-color:#07070b;
+    background-image:
+        linear-gradient(rgba(5,5,10,.48),rgba(5,5,10,.58)),
+        url("dark_staff_bg.png");
+    background-size:cover;
+    background-position:center;
+    background-attachment:fixed;
+    background-repeat:no-repeat;
+}
+.card{
+    background:rgba(13,13,20,.82);
+    border:1px solid rgba(155,124,255,.28);
+    box-shadow:0 20px 70px rgba(0,0,0,.65),0 0 35px rgba(112,76,255,.10);
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+}
+section{
+    background:rgba(10,10,16,.58);
+    border-color:rgba(155,124,255,.18);
+}
